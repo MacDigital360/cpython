@@ -5,7 +5,6 @@ import pathlib
 import tempfile
 import textwrap
 import contextlib
-import unittest
 
 from test.support.os_helper import FS_NONASCII
 from typing import Dict, Union
@@ -87,6 +86,10 @@ class DistInfoPkg(OnSysPath, SiteDir):
                 Version: 1.0.0
                 Requires-Dist: wheel >= 1.0
                 Requires-Dist: pytest; extra == 'test'
+                Keywords: sample package
+
+                Once upon a time
+                There was a distinfo pkg
                 """,
             "RECORD": "mod.py,sha256=abc,20\n",
             "entry_points.txt": """
@@ -158,6 +161,9 @@ class EggInfoPkg(OnSysPath, SiteDir):
                 Version: 1.0.0
                 Classifier: Intended Audience :: Developers
                 Classifier: Topic :: Software Development :: Libraries
+                Keywords: sample package
+                Description: Once upon a time
+                        There was an egginfo package
                 """,
             "SOURCES.txt": """
                 mod.py
@@ -221,7 +227,6 @@ class LocalPackage:
         build_files(self.files)
 
 
-
 def build_files(file_defs, prefix=pathlib.Path()):
     """Build a set of files/directories, as described by the
 
@@ -252,16 +257,13 @@ def build_files(file_defs, prefix=pathlib.Path()):
                 with full_name.open('wb') as f:
                     f.write(contents)
             else:
-                with full_name.open('w') as f:
+                with full_name.open('w', encoding='utf-8') as f:
                     f.write(DALS(contents))
 
 
 class FileBuilder:
     def unicode_filename(self):
         return FS_NONASCII or self.skip("File system does not support non-ascii.")
-
-    def skip(self, reason):
-        raise unittest.SkipTest(reason)
 
 
 def DALS(str):
